@@ -50,8 +50,7 @@ const EventCard = ({ event, onOpenModal }) => {
 
     {/* Badge bien positionné au-dessus de l'icône */}
     <Badge 
-      badgeContent={event.artists.length} 
-      color="secondary" 
+      badgeContent={event.artists.length}  
       sx={{ 
         position: "absolute", 
         top: -6, 
@@ -62,7 +61,9 @@ const EventCard = ({ event, onOpenModal }) => {
           height: "22px",
           borderRadius: "50%", 
           border: "2px solid white", 
-          boxShadow: 4, 
+          boxShadow: 4,
+          backgroundColor: "#4CAF50", 
+          color: "white",
         }
       }}
     />

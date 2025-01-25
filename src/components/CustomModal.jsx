@@ -2,6 +2,8 @@ import React from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
+// CustomModal.jsx
+
 const CustomModal = ({ open, onClose, title, children, onSave, loading }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -20,3 +22,5 @@ const CustomModal = ({ open, onClose, title, children, onSave, loading }) => {
 };
 
 export default CustomModal;
+
+
