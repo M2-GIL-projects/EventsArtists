@@ -44,17 +44,17 @@ function EventsList() {
                 <CardContent>
                   <Typography variant="h5">{event.label}</Typography>
                   <Typography color="textSecondary">
-                    Start: {new Date(event.startDate).toLocaleDateString()}
+                    Début: {new Date(event.startDate).toLocaleDateString()}
                   </Typography>
                   <Typography color="textSecondary">
-                    End: {new Date(event.endDate).toLocaleDateString()}
+                    Fin: {new Date(event.endDate).toLocaleDateString()}
                   </Typography>
                   <Typography>
-                    Artists: {event.artists.map((artist) => artist.label).join(", ")}
+                    Artistes: {event.artists.map((artist) => artist.label).join(", ")}
                   </Typography>
                 </CardContent>
                 <Button size="small" href={`/events/${event.id}`}>
-                  Learn More
+                  Lire plus
                 </Button>
               </Card>
             </Grid>

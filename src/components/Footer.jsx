@@ -20,24 +20,8 @@ const Footer = () => {
           © {new Date().getFullYear()} EventManager - Tous droits réservés.
         </Typography>
         
-        {/* Icônes de réseaux sociaux */}
-        <Box sx={{ mt: 1 }}>
-          <IconButton href="https://facebook.com" target="_blank" color="inherit">
-            <Facebook />
-          </IconButton>
-          <IconButton href="https://twitter.com" target="_blank" color="inherit">
-            <Twitter />
-          </IconButton>
-          <IconButton href="https://instagram.com" target="_blank" color="inherit">
-            <Instagram />
-          </IconButton>
-        </Box>
-
-        {/* Liens de footer */}
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          <Link href="/about" color="inherit" sx={{ mx: 1 }}>À propos</Link> | 
-          <Link href="/contact" color="inherit" sx={{ mx: 1 }}>Contact</Link>
-        </Typography>
+     
+      
       </Container>
     </Box>
   );

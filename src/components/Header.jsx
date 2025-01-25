@@ -1,15 +1,15 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, IconButton } from "@mui/material";
-import { Menu as MenuIcon } from "@mui/icons-material";
+import { LibraryMusic } from "@mui/icons-material"; // Remplacement de l'icône
 import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
     <AppBar position="sticky" sx={{ backgroundColor: "#1976d2" }}>
       <Toolbar>
-        {/* Icône Menu à gauche */}
-        <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-          <MenuIcon />
+        {/* Icône Musique à gauche */}
+        <IconButton edge="start" color="inherit" aria-label="music" sx={{ mr: 2 }}>
+          <LibraryMusic />
         </IconButton>
 
         {/* Titre / Logo */}
