@@ -27,8 +27,20 @@ const useEventOperations = (eventId, onEventUpdate) => {
       setError("Erreur lors de la suppression de l'artiste.");
     }
   };
+  const addArtistToEvent = async (artistId) => {
+    try {
+      await axios.post(`http://localhost:8080/events/${eventId}/artists/${artistId}`);
+      onEventUpdate(); // Rafraîchir la liste après l'ajout
+      setSuccess("Artiste ajouté avec succès !");
+    } catch (error) {
+      setError("Erreur lors de l'ajout de l'artiste.");
+    }
+  };
+  
+  return { updateEvent, removeArtist, addArtistToEvent, error, setError, success, setSuccess, loading };
 
-  return { updateEvent, removeArtist, error, setError, success, setSuccess, loading };
 };
+
+
 
 export default useEventOperations;

@@ -12,7 +12,7 @@ function EventsList() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const pageSize = 4;
+  const pageSize = 2;
 
   const fetchEvents = async () => {
     setLoading(true);
