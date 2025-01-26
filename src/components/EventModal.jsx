@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   DialogContent, Alert, List, ListItem, ListItemText,
   Typography, IconButton, Box, TextField, Dialog,
-  Button, DialogTitle, DialogActions
+  Button, DialogTitle, DialogActions, Snackbar
 } from "@mui/material";
 import { People, Delete, AddCircle, Close } from "@mui/icons-material";
 import axios from "axios";
@@ -10,7 +10,7 @@ import CustomModal from "./CustomModal";
 import useEventOperations from "../hooks/useEventOperations";
 import ConfirmationDialog from './ConfirmationDialog';
 
-const EventModal = ({ open, onClose, event }) => {
+const EventModal = ({ open, onClose, event, onEventUpdate }) => {
   const [formData, setFormData] = useState({
     label: "",
     startDate: "",
@@ -27,9 +27,26 @@ const EventModal = ({ open, onClose, event }) => {
     type: null,
     data: null
   });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success"
+  });
 
-  const { updateEvent, removeArtist, addArtistToEvent, error, success, loading } = 
-    useEventOperations(event?.id, null);
+  const { 
+    updateEvent, 
+    removeArtist, 
+    addArtistToEvent, 
+    loading 
+  } = useEventOperations(event?.id, onEventUpdate);
+
+  const showMessage = (message, severity = "success") => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
 
   useEffect(() => {
     if (open && event) {
@@ -54,7 +71,7 @@ const EventModal = ({ open, onClose, event }) => {
       const response = await axios.get(`http://localhost:8080/artists?page=0&size=10`);
       setArtists(response.data.content || []);
     } catch (error) {
-      console.error("Erreur lors de la récupération des artistes:", error);
+      showMessage("Erreur lors de la récupération des artistes", "error");
     }
     setLoadingArtists(false);
   };
@@ -78,22 +95,34 @@ const EventModal = ({ open, onClose, event }) => {
       setConfirmDialog({ open: false, type: null, data: null });
       onClose(false);
     } else if (type === 'delete') {
-      await removeArtist(data.id);
-      setFormData(prev => ({
-        ...prev,
-        artists: prev.artists.filter(a => a.id !== data.id)
-      }));
+      const success = await removeArtist(data.id);
+      if (success) {
+        setFormData(prev => ({
+          ...prev,
+          artists: prev.artists.filter(a => a.id !== data.id)
+        }));
+        showMessage(`Artiste ${data.label} supprimé avec succès`);
+        setHasChanges(true);
+      } else {
+        showMessage("Erreur lors de la suppression de l'artiste", "error");
+      }
       setConfirmDialog({ open: false, type: null, data: null });
-      setHasChanges(true);
     }
   };
 
   const handleSave = async () => {
-    if (formData.label.length < 3) return;
-    if (new Date(formData.startDate) > new Date(formData.endDate)) return;
+    if (formData.label.length < 3) {
+      showMessage("Le nom doit comporter au moins 3 caractères.", "error");
+      return;
+    }
+    if (new Date(formData.startDate) > new Date(formData.endDate)) {
+      showMessage("La date de début doit être avant la date de fin.", "error");
+      return;
+    }
     
     const success = await updateEvent(formData);
     if (success) {
+      showMessage("Événement mis à jour avec succès");
       setHasChanges(false);
       onClose(true);
     }
@@ -116,6 +145,9 @@ const EventModal = ({ open, onClose, event }) => {
       }));
       setOpenArtistsModal(false);
       setHasChanges(true);
+      showMessage(`Artiste ${artist.label} ajouté avec succès`);
+    } else {
+      showMessage("Erreur lors de l'ajout de l'artiste", "error");
     }
   };
 
@@ -141,9 +173,6 @@ const EventModal = ({ open, onClose, event }) => {
         onSave={handleSave}
         loading={loading}
       >
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-        {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
-
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
           <TextField
             label="Nom de l'événement"
@@ -229,6 +258,21 @@ const EventModal = ({ open, onClose, event }) => {
         message={dialogConfig[confirmDialog.type]?.message}
         confirmText={dialogConfig[confirmDialog.type]?.confirmText}
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))} 
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

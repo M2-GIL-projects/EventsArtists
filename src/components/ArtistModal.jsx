@@ -103,11 +103,9 @@ const ArtistModal = ({ open, onClose, artist, onArtistUpdate }) => {
         ...prev,
         events: [...prev.events, event]
       }));
-      showMessage(`Événement ${event.label} ajouté avec succès !`, "success");
       showAlert(`Événement ${event.label} ajouté avec succès !`, "success");
       setOpenEventsModal(false);
     } catch (error) {
-      showMessage("Erreur lors de l'ajout de l'événement", "error");
       showAlert("Erreur lors de l'ajout de l'événement", "error");
     }
   };
@@ -119,10 +117,8 @@ const ArtistModal = ({ open, onClose, artist, onArtistUpdate }) => {
         ...prev,
         events: prev.events.filter(e => e.id !== event.id)
       }));
-      showMessage(`Événement ${event.label} retiré avec succès !`, "success");
       showAlert(`Événement ${event.label} retiré avec succès !`, "success");
     } catch (error) {
-      showMessage("Erreur lors du retrait de l'événement", "error");
       showAlert("Erreur lors du retrait de l'événement", "error");
     }
     setConfirmDialogOpen(false);
@@ -130,7 +126,6 @@ const ArtistModal = ({ open, onClose, artist, onArtistUpdate }) => {
 
   const handleSave = async () => {
     if (formData.label.length < 3) {
-      showMessage("Le nom doit comporter au moins 3 caractères", "error");
       showAlert("Le nom doit comporter au moins 3 caractères", "error");
       return;
     }
@@ -138,11 +133,9 @@ const ArtistModal = ({ open, onClose, artist, onArtistUpdate }) => {
     setLoading(true);
     try {
       await axios.put(`http://localhost:8080/artists/${artist.id}`, { label: formData.label });
-      showMessage("Artiste mis à jour avec succès !", "success");
       showAlert("Artiste mis à jour avec succès !", "success");
       if (onArtistUpdate) onArtistUpdate();
     } catch (error) {
-      showMessage("Erreur lors de la mise à jour de l'artiste", "error");
       showAlert("Erreur lors de la mise à jour de l'artiste", "error");
     }
     setLoading(false);

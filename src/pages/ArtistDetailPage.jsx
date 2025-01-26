@@ -42,9 +42,6 @@ const ArtistDetailPage = () => {
           message = "L'artiste demandé n'a pas été trouvé.";
           navigate('/artists');
           break;
-        case 403:
-          message = "Vous n'avez pas les droits pour accéder à cet artiste.";
-          break;
         case 500:
           message = "Une erreur serveur s'est produite. Veuillez réessayer plus tard.";
           break;

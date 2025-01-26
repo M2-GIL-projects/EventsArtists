@@ -1,7 +1,7 @@
 
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
+import Layout from "./components/layouts/Layout";
 import EventsList from "./pages/EventsList";
 import ArtistsList from "./pages/ArtistsList"; 
 import ArtistDetailPage from "./pages/ArtistDetailPage";

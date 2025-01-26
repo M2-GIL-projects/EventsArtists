@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
-  Container, Typography, Grid, CircularProgress, TextField,
-  Button, Box, Card, CardContent, Chip, Paper, Dialog,
-  DialogTitle, DialogContent, DialogActions, Alert, Snackbar
+  Container, 
+  Typography, 
+  Grid, 
+  CircularProgress, 
+  Box, 
+  Card, 
+  CardContent, 
+  Chip, 
+  Paper, 
+  Snackbar, 
+  Alert,
+  Button
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { MusicOff, Search, Error, Clear } from '@mui/icons-material';
+import { MusicOff } from '@mui/icons-material';
 import PaginationComponent from "../components/PaginationComponent";
+import SearchBar from "../components/SearchBar";
 
 const NoArtistsFound = ({ searchTerm }) => (
   <Paper 
@@ -32,41 +42,6 @@ const NoArtistsFound = ({ searchTerm }) => (
         : "Il n'y a actuellement aucun artiste enregistré"}
     </Typography>
   </Paper>
-);
-
-const SearchBar = ({ searchTerm, setSearchTerm, handleSearch, handleClear }) => (
-  <Box sx={{ 
-    display: "flex", 
-    justifyContent: "center", 
-    gap: 2, 
-    mb: 4,
-    flexWrap: 'wrap'
-  }}>
-    <TextField
-      label="Rechercher un artiste"
-      variant="outlined"
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-      InputProps={{
-        startAdornment: <Search sx={{ color: 'text.secondary', mr: 1 }} />,
-        endAdornment: searchTerm && (
-          <Clear 
-            sx={{ color: 'text.secondary', cursor: 'pointer' }}
-            onClick={handleClear}
-          />
-        )
-      }}
-    />
-    <Button 
-      variant="contained" 
-      color="primary" 
-      onClick={handleSearch}
-      sx={{ height: '56px' }}
-    >
-      Rechercher
-    </Button>
-  </Box>
 );
 
 const ArtistsList = () => {

@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80" # Frontend disponible sur localhost:4200
+    environment:
+      - VITE_API_URL=http://backend:8080
+    depends_on:
+      - backend
+
+  backend:
+    image: openjdk:17-jdk-alpine # Exemple si le backend est un fichier JAR
+    container_name: backend
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: ["java", "-jar", "votre_application.jar"]
+    ports:
+      - "8080:8080"
