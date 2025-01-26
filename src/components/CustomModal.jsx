@@ -2,8 +2,6 @@ import React from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
-// CustomModal.jsx
-
 const CustomModal = ({ open, onClose, title, children, onSave, loading }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -13,7 +11,7 @@ const CustomModal = ({ open, onClose, title, children, onSave, loading }) => {
         <Button onClick={onSave} color="primary" variant="contained" disabled={loading}>
           {loading ? "Enregistrement..." : "Enregistrer"}
         </Button>
-        <Button onClick={onClose} color="secondary" variant="contained" startIcon={<Close />}>
+        <Button onClick={onClose} color="error" variant="contained" startIcon={<Close />}>
           Fermer
         </Button>
       </DialogActions>
@@ -22,5 +20,3 @@ const CustomModal = ({ open, onClose, title, children, onSave, loading }) => {
 };
 
 export default CustomModal;
-
-

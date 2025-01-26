@@ -1,5 +1,3 @@
-// hooks/useEventForm.js
-
 import { useState, useEffect } from 'react';
 
 const useEventForm = (initialEvent) => {
