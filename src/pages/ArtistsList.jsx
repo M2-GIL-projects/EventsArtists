@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import PaginationComponent from "../components/PaginationComponent";
+import SearchBar from "../components/SearchBar";
 import {
   Container, 
   Typography, 
@@ -16,33 +18,6 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { MusicOff } from '@mui/icons-material';
-import PaginationComponent from "../components/PaginationComponent";
-import SearchBar from "../components/SearchBar";
-
-const NoArtistsFound = ({ searchTerm }) => (
-  <Paper 
-    elevation={3}
-    sx={{
-      p: 4,
-      mt: 4,
-      maxWidth: 600,
-      mx: 'auto',
-      textAlign: 'center',
-      bgcolor: 'background.paper',
-      borderRadius: 4
-    }}
-  >
-    <MusicOff sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
-    <Typography variant="h5" gutterBottom color="primary" fontWeight="bold">
-      {searchTerm ? 'Aucun résultat trouvé' : 'Aucun artiste disponible'}
-    </Typography>
-    <Typography color="text.secondary" paragraph>
-      {searchTerm 
-        ? `Aucun artiste ne correspond à "${searchTerm}"`
-        : "Il n'y a actuellement aucun artiste enregistré"}
-    </Typography>
-  </Paper>
-);
 
 const ArtistsList = () => {
   const [artists, setArtists] = useState([]);
@@ -50,7 +25,7 @@ const ArtistsList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [hasArtists, setHasArtists] = useState(true);
+  const [error, setError] = useState(null);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -70,6 +45,7 @@ const ArtistsList = () => {
 
   const fetchArtists = async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await axios.get(`http://localhost:8080/artists`, {
         params: {
@@ -78,22 +54,43 @@ const ArtistsList = () => {
           label: searchTerm || undefined
         }
       });
-      
       const content = response.data.content || [];
       setArtists(content);
       setTotalPages(response.data.totalPages || 1);
-      setHasArtists(content.length > 0 || !searchTerm);
     } catch (error) {
-      let message = "Une erreur est survenue lors de la récupération des artistes.";
-      if (error.response?.status === 404) {
-        message = "La ressource demandée n'a pas été trouvée.";
-      } else if (error.response?.status === 500) {
-        message = "Une erreur serveur s'est produite. Veuillez réessayer plus tard.";
+      let errorMessage = "Une erreur est survenue lors de la récupération des artistes.";
+      
+      if (error.response) {
+        switch (error.response.status) {
+          case 400:
+            errorMessage = "Requête invalide. Impossible de charger les artistes.";
+            break;
+          case 401:
+            errorMessage = "Accès non autorisé. Connexion requise.";
+            break;
+          case 403:
+            errorMessage = "Permissions insuffisantes pour afficher les artistes.";
+            break;
+          case 404:
+            errorMessage = "Aucun artiste trouvé.";
+            break;
+          case 500:
+            errorMessage = "Erreur serveur. Impossible de récupérer les artistes.";
+            break;
+          case 503:
+            errorMessage = "Service temporairement indisponible.";
+            break;
+          default:
+            errorMessage = "Erreur de chargement des artistes.";
+        }
+      } else if (error.request) {
+        errorMessage = "Aucune réponse du serveur. Vérifiez votre connexion.";
       }
-      showSnackbar(message);
+      
+      setError(errorMessage);
       setArtists([]);
       setTotalPages(0);
-      setHasArtists(false);
+      showSnackbar(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -120,12 +117,16 @@ const ArtistsList = () => {
         🎤 Liste des Artistes 🎤
       </Typography>
 
-      <SearchBar 
-        searchTerm={searchTerm} 
-        setSearchTerm={setSearchTerm} 
-        handleSearch={handleSearch}
-        handleClear={handleClear}
-      />
+      {!loading && !error && artists.length > 0 && (
+        <Box>
+          <SearchBar 
+            searchTerm={searchTerm} 
+            setSearchTerm={setSearchTerm} 
+            handleSearch={handleSearch}
+            handleClear={handleClear}
+          />
+        </Box>
+      )}
 
       {loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 5, gap: 2 }}>
@@ -134,8 +135,29 @@ const ArtistsList = () => {
             Chargement des artistes...
           </Typography>
         </Box>
-      ) : artists.length === 0 ? (
-        <NoArtistsFound searchTerm={searchTerm} />
+      ) : error || artists.length === 0 ? (
+        <Paper 
+          elevation={3}
+          sx={{
+            p: 4,
+            mt: 4,
+            maxWidth: 600,
+            mx: 'auto',
+            textAlign: 'center',
+            bgcolor: 'background.paper',
+            borderRadius: 4
+          }}
+        >
+          <MusicOff sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
+          <Typography variant="h5" gutterBottom color="primary" fontWeight="bold">
+            {searchTerm ? 'Aucun résultat trouvé' : 'Aucun artiste disponible'}
+          </Typography>
+          <Typography color="text.secondary" paragraph>
+            {searchTerm 
+              ? `Aucun artiste ne correspond à "${searchTerm}"` 
+              : (error || "Il n'y a actuellement aucun artiste enregistré")}
+          </Typography>
+        </Paper>
       ) : (
         <>
           <Grid container spacing={3} justifyContent="center">
